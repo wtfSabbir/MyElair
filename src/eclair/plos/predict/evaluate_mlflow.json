@@ -1,0 +1,31 @@
+{
+    "_comment_class_names": "Mapping des ids de classes aux noms des objets. Défini également les classes sur lesquelles vont être calculées les métriques",
+
+    "class_names": {
+        "2": "Tronc",
+        "5": "Poteau",
+        "6": "Panneau",
+        "7": "Potelet"
+    },
+    "_comment_remap_dict": "Mapping des ids de classes des nuages gt pour correspondre aux classes des prédictions.",
+    "remap_dict": {
+        "2": "5",
+        "3": "6",
+        "4": "7",
+        "5": "2",
+        "6": "3",
+        "7": "4",
+        "8": "4",
+        "9": "4",
+        "10": "4"
+    },
+
+  "mlflow_uri": "https://gsvision.geo-sat.com/mlflow/",
+  "mlflow_experiment_name": "Eclair_PLO",
+  "mlflow_run_name": "Eclair_v13_fuze",
+  "mlflow_dataset_name": "EvalPLOv1",
+  "mlflow_folder_path": "R:/9_temporary_files/for_temporary_storage_1_month/malo/Eclair_preprod/v13",
+
+  "log_artifacts_files": null
+
+}

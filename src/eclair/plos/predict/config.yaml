@@ -1,0 +1,52 @@
+###POUR LA PREDICTION DES NUAGES
+
+random_seed: 1984
+
+feature_names:
+  - colors # size: 3
+num_features: 3
+
+#Classes en sortie du modèle de base.
+#Doivent être mappées vers un indice dans `classes`
+classes_base:
+  - unclassified
+  - ground
+  - vertical_object
+  - trunk
+  - vegetation
+  - building
+
+#Classes en sortie du modèle PLO
+#Doivent être mappées vers un indice dans `classes`
+classes_plo:
+  - unclassified
+  - pole
+  - sign
+  - bollard
+
+voxel_size: 0.08
+test_batch_size: 1
+
+test_transforms:
+  - name: NormalizeCoordinates_predict
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+
+#Mapping de classes souhaitées par l'utilisateur dans le nuage en sortie
+#Si deux classes sont mappées vers le même indice, elles sont fusionnées
+classes:
+  unclassified: 0
+  ground: 1
+  trunk: 2
+  vegetation: 3
+  building: 4
+  pole: 5
+  sign: 6
+  bollard: 7
+  vertical_object: 8
+
+#paramètres pour extraire les composantes connexes
+dbscan:
+  eps: 0.03
+  min_samples: 5
