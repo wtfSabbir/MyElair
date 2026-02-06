@@ -1,0 +1,103 @@
+random_seed: 1984
+
+feature_names:
+#  - intensity # size: 1
+#  - return_number # size: 5 (one-hot)
+  #  - number_of_returns # size: 5 (one-hot)
+  - colors # size: 3
+num_features: 3
+
+
+num_classes: 3      #Si 2 classes, indiquer 1. Sinon, indiquer normalement le nb de classes.
+
+
+#
+input_mapping:
+ 0: 0
+ 1: 0
+ 2: 0
+ 3: 0
+ 4: 1
+ 5: 2
+ 6: 0
+ 7: 0
+ 8: 0
+ 9: 0
+ 10: 0
+ 11: 0
+ 12: 0
+ 13: 0
+ 14: 0
+ 15: 0
+
+
+voxel_size: 0.01
+
+
+batch_size: 1
+test_batch_size: 1
+epochs: 1000
+loss: FocalTverskyLoss_multiclass                      #Either FocalTverskyLoss or FocalLoss
+#loss_weights: [1/0.0167,1/0.2778,1/0.3081,1/0.0581,1/0.0115,1/0.0099,1/0.1393,1/0.0453,1/0.0373,1/0.0250,1/0.0042,1/0.0016,1/0.0371,1/0.0131,1/0.0009,1/0.0134]             #Either [alpha, beta] for FocalTverskyLoss or [w1, w2, ..., wi] for FocalLoss with i classes
+#loss_weights: [1/(0.0167+0.0009),1/(0.2778+0.3081+0.0581),1/0.0115,1/0.0029,1/0.1393,1/(0.0453+0.0373+0.0250),1/0.0042,1/0.0016,1/(0.0371+0.0131),1/0.0134]             #Either [alpha, beta] for FocalTverskyLoss or [w1, w2, ..., wi] for FocalLoss with i classes
+
+#loss_weights: [1/(0.0167+0.0009+0.0134),1/(0.2778+0.3081+0.0581),1/0.0115,1/0.0099,1/0.1393,1/(0.0453+0.0373+0.0250),1/0.0042,1/0.0016,1/(0.0371+0.0131)]
+#loss_weights: [[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]]
+#loss_weights: [[0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8],[0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8,0.8]]
+loss_weights: [[0.8,0.8,0.8],[0.8,0.8,0.8]]
+
+#loss_weights: [1/(0.0167+0.0009),1/(0.2778+0.3081+0.0581+0.0115+0.0099),1/0.1393,1/(0.0453+0.0373+0.0250),1/0.0042,1/0.0016,1/(0.0371+0.0131),1/0.0134]             #Either [alpha, beta] for FocalTverskyLoss or [w1, w2, ..., wi] for FocalLoss with i classes
+#loss_weights: [ 1/0.7,1/(0.0115+0.0099)]             #Either [alpha, beta] for FocalTverskyLoss or [w1, w2, ..., wi] for FocalLoss with i classes
+#loss_weights: [5,2,6,6,1,1.5,3,2,1.5]             #Either [alpha, beta] for FocalTverskyLoss or [w1, w2, ..., wi] for FocalLoss with i classes
+#loss_weights: [0.5,0.5]
+
+patience: 500
+#weights_name: 'iantsa_anno_reanno72_e300_vxl0002_intrgb_b1_TFL_0505_curbguttfuzed'             #Name of the weight file that will be saved in /model_weights
+
+weights_name: 'iantsa_anno_reanno72_curbgutt_e1000_vxl001_0808_newnorm'             #Name of the weight file that will be saved in /model_weights
+       #Name of the weight file that will be saved in /model_weights
+
+
+
+train_transforms:
+  - name: Rotate
+    params:
+      feature_names: ${feature_names}
+#  - name: Flip
+#    params:
+#      feature_names: ${feature_names}
+  - name: Scale
+    params:
+      feature_names: ${feature_names}
+  - name: RandomDelete
+    params:
+      feature_names: ${feature_names}
+  - name: RandomCrop
+    params:
+      feature_names: ${feature_names}
+  - name: AddRandomPoints
+  - name: Intensity_RGB_Variation
+    params:
+      feature_names: ${feature_names}
+#  - name: Noise
+#    params:
+#      feature_names: ${feature_names}
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
+
+
+
+
+test_transforms:
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}

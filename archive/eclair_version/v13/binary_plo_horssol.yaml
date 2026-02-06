@@ -1,0 +1,89 @@
+random_seed: 1984
+
+#tuiles 40*40*20 ou 40*40*40
+
+feature_names:
+#  - intensity # size: 1
+#  - return_number # size: 5 (one-hot)
+  #  - number_of_returns # size: 5 (one-hot)
+  - colors # size: 3
+num_features: 6
+
+num_classes: 1    #Si 2 classes, indiquer 1. Sinon, indiquer normalement le nb de classes.
+
+input_mapping:
+ 0: 0 #unclass
+ 1: 1 #ground
+ 2: 1 #pole
+ 3: 1 #pano
+ 4: 1 #potelet
+
+
+
+voxel_size: 0.05
+
+batch_size: 2
+test_batch_size: 1
+epochs: 2000
+loss: FocalTverskyLoss              #Either FocalTverskyLoss or FocalLoss
+
+loss_weights: [0.4,1]
+
+patience: 1000
+#weights_name: 'iantsa_anno_reanno72_e300_vxl0002_intrgb_b1_TFL_0505_curbguttfuzed'             #Name of the weight file that will be saved in /model_weights
+#weights_name: 'obj_verti_trainv10_poteau_sansnorm_vxl014_FTL071_b2_sansattention'             #Name of the weight file that will be saved in /model_weights
+weights_name: 'plosanssol_trainv13sousechtestattcoords_binaryplo_clouds_minkunet14c_binaryplo_normrange_vxl005_404040range_FTL_adapt_b2_04_1'             #Name of the weight file that will be saved in /model_weights
+
+
+train_transforms:
+  - name: Rotate
+    params:
+      feature_names: ${feature_names}
+  - name: Flip
+    params:
+      feature_names: ${feature_names}
+  - name: Scale
+    params:
+      feature_names: ${feature_names}
+  - name: RandomDelete
+    params:
+      feature_names: ${feature_names}
+#  - name: RandomCrop
+#    params:
+#      feature_names: ${feature_names}
+#  - name: AddRandomPoints
+  - name: ElasticDistortion
+  - name: ShearTransform
+  - name: StretchTransform
+  - name: Intensity_RGB_Variation
+    params:
+      feature_names: ${feature_names}
+  - name: Noise
+    params:
+      feature_names: ${feature_names}
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
+
+val_transforms:
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
+
+
+test_transforms:
+  - name: NormalizeCoordinates_predict
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}

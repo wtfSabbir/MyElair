@@ -1,0 +1,28 @@
+random_seed: 1984
+
+feature_names:
+#  - return_number # size: 5 (one-hot)
+  #  - number_of_returns # size: 5 (one-hot)
+  - colors # size: 3
+num_features: 3
+
+
+num_classes: 1      #Si 2 classes, indiquer 1. Sinon, indiquer normalement le nb de classes.
+
+input_mapping:
+ 0: 0
+ 1: 1
+
+
+hdf5_path_train: '/mnt/d/pointcloud_data/supervoxel/graph/train_v8/train/supervoxel_data_corresp_train.h5'
+hdf5_path_val: '/mnt/d/pointcloud_data/supervoxel/graph/train_v8/val/supervoxel_data_corresp.h5'
+quantization_size: 0.01   # Ajoutez cette ligne avec la valeur souhaitée
+batch_size: 2
+test_batch_size: 1
+epochs: 400
+
+loss: FocalTverskyLoss                      #Either FocalTverskyLoss or FocalLoss
+loss_weights: [0.5,0.8]
+patience: 60
+weights_name: 'obj_verti_hdf5_test2'             #Name of the weight file that will be saved in /model_weights
+
