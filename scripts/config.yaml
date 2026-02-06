@@ -1,0 +1,109 @@
+random_seed: 1984
+
+
+
+### NUAGES ###
+
+feature_names: #features souhaités en input du model
+  - intensity # size: 1
+#  - return_number # size: 5 (one-hot)
+#  - number_of_returns # size: 5 (one-hot)
+#  - colors # size: 3
+
+num_features: 1    #Le nombre total de features
+num_classes: 8     #Le nombre de classes total. Si uniquement 2 classes, indiquer 1.
+
+input_mapping: #Si besoin. Les classes doivent être indexées de manière continues
+ 0: 0
+ 1: 1
+ 2: 2
+ 3: 3
+ 4: 4
+ 5: 5
+ 6: 6
+ 7: 7
+ 8: 8
+
+
+### MODELE ###
+
+model_name: MinkUNet14C #Voir readme pour les possibilités
+voxel_size: 0.08 #Taille des voxels en mètres.
+batch_size: 2
+test_batch_size: 1
+epochs: 2000
+patience: 300
+num_worker: 1
+pin_memory: False
+learning_rate: 1e-4
+weight_decay: 1e-5
+self_attention: 0 # 0, 1 ou 2 couches
+multihead_attention: 0 # 0, 1 ou 2 couches.
+num_head: 4 #Nombre de tête de la MultiHeadAttention
+loss: FocalTverskyLoss_multiclass #Choix: FocalTverskyLoss (cas binaire), FocalLoss (tout cas de figure), FocalTverskyLoss_multiclass (> à 2 classes)
+loss_weights: [[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5],[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]] #Voir le Readme de repo git pour plus d'info selon la loss souhaitée.
+weights_name: 'Mink14c_05_05_eclair_gamms_preprod_vxl008_b2' #nom des poids qui seront sauvegardés
+
+
+
+
+### TRANSFORMATIONS ###
+
+cloud_size: #Taille des nuages fixe. Voir readme pour plus d'info.
+  max_range_xy: 30.0
+  max_range_z: 30.0
+
+#Data-augmentation appliquées. Plus d'info dans le readme. Il suffit de commenter pour ne pas appliquer l'augmentation.
+train_transforms:
+  - name: Rotate
+    params:
+      feature_names: ${feature_names}
+  - name: Flip
+    params:
+      feature_names: ${feature_names}
+  - name: Scale
+    params:
+      feature_names: ${feature_names}
+  - name: RandomDelete
+    params:
+      feature_names: ${feature_names}
+#  - name: RandomCrop
+#    params:
+#      feature_names: ${feature_names}
+#  - name: AddRandomPoints
+  - name: ElasticDistortion
+  - name: ShearTransform
+  - name: StretchTransform
+  - name: Intensity_RGB_Variation
+    params:
+      feature_names: ${feature_names}
+  - name: Noise
+    params:
+      feature_names: ${feature_names}
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
+
+
+###Normalisation de base pour les nuages de test et validation. Il est déconseillé d'y toucher.
+val_transforms:
+  - name: NormalizeCoordinates
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
+
+test_transforms:
+  - name: NormalizeCoordinates_predict
+  - name: NormalizeFeatures
+    params:
+      feature_names: ${feature_names}
+  - name: RemapClassification
+    params:
+      class_mapping: ${input_mapping}
