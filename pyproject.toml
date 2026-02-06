@@ -1,0 +1,124 @@
+[project]
+name = "eclair"
+description = "Deep learning model for semantic segmentation of 3D point clouds."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "TARDIF Malo", email = "m.tardif@geo-sat.com" }]
+maintainers = [
+    { name = "SOUCASSE Bastien", email = "b.soucasse@geo-sat.com" },
+    { name = "D'ESPARBES Romain", email = "r.desparbes@geo-sat.com" },
+]
+keywords = ["artificial intelligence", "deep learning", "segmentation", "point cloud", "geospatial analysis", "gis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Environment :: GPU",
+    "Environment :: GPU :: NVIDIA CUDA",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Typing :: Typed",
+]
+dependencies = [
+    "laspy[lazrs]",
+    "minkowski-engine",
+    "mlflow",
+    "numpy",
+    "omegaconf",
+    "pandas",
+    "scikit-learn",
+    "torch",
+    "torch-geometric",
+    "tqdm",
+]
+dynamic = ["version"]
+
+[project.urls]
+repository = "https://gitlab.geo-sat.com/rnd/research/eclair"
+homepage = "https://gitlab.geo-sat.com/rnd/research/eclair"
+changelog = "https://gitlab.geo-sat.com/rnd/research/eclair/CHANGELOG.md"
+
+[project.optional-dependencies]
+gsvision = ["gsvision-abstractions"]
+psanp = ["psanp-abstractions", "gscloud"]
+
+[project.entry-points.'geosat.gsvision.plugins']
+eclair-plos = "eclair.plos.gsvision"
+
+[project.entry-points.'psanp.plugins']
+eclair-plos = "eclair.plos.psanp.register_stages"
+
+[dependency-groups]
+lint = ["ruff"]
+types = ["mypy", "pandas-stubs", "types-tqdm"]
+tests = ["pytest", "pytest-cov"]
+dev = [{ include-group = "lint" }, { include-group = "types" }, { include-group = "tests" }]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[[tool.uv.index]]
+name = "geosat"
+url = "https://pypi.geo-sat.com/simple"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu118"
+url = "https://download.pytorch.org/whl/cu118"
+explicit = true
+
+[tool.uv.sources]
+minkowski-engine = [{ index = "geosat" }]
+gsvision-abstractions = [{ index = "geosat" }]
+torch = [{ index = "pytorch-cu118" }]
+
+[tool.ruff]
+line-length = 120
+preview = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["CPY001", "COM812", "DOC201", "S311", "NPY002", "N801", "DOC501"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.mypy]
+files = [
+    "src/eclair/plos/model",
+    "src/eclair/plos/predict",
+    "src/eclair/plos/psanp",
+    "tests",
+]
+strict = true
+
+[[tool.mypy.overrides]]
+module = [
+    "MinkowskiEngine",
+    "laspy",
+    "sklearn.cluster",
+    "torch_geometric.data",
+    "torch_geometric.loader",
+    "torch_geometric.transforms",
+]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+omit = ["src/eclair/plos/model/model.py"]
